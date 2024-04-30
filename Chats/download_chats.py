@@ -2,9 +2,14 @@ from telethon.sync import TelegramClient
 from googletrans import Translator
 import json
 
-PHONE_NUMBER = '$$$'
-TELEGRAM_APP_ID = '$$$'
-TELEGRAM_APP_HASH = '$$$'
+PHONE_NUMBER = ###
+TELEGRAM_APP_ID = ###
+TELEGRAM_APP_HASH = ###
+
+def translate_text(text):
+    translator = Translator()
+    translation = translator.translate(text, src='ru', dest='en')
+    return translation.text
 
 def save_to_json(file_to_save, file_name: str) -> None:
     with open(file_name, "w", encoding="utf-8") as f:
@@ -22,13 +27,14 @@ def parse_messages(dialog, limit = 10):
     count = 0
     for message in client.iter_messages(dialog):
         if isinstance(message.message, str):
-            dict_message = {
-                    "date": message.date.isoformat(),
-                    "message": message.message,
-                    "out": message.out,
-                }
-            all_messages_list.append(dict_message)
-            count += 1
+            if message.entities is None: # check: is code, is url
+                dict_message = {
+                        "date": message.date.isoformat(),
+                        "message": message.message,
+                        "out": message.out,
+                    }
+                all_messages_list.append(dict_message)
+                count += 1
     return all_messages_list
 
 with TelegramClient(PHONE_NUMBER, TELEGRAM_APP_ID, TELEGRAM_APP_HASH) as client:
